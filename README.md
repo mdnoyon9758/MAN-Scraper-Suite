@@ -35,8 +35,8 @@ MAN Scraper Suite is a 100% free web scraping and automation toolkit that provid
 - **Audit Logging**: Complete compliance and audit trail system
 
 ### 🌐 User Experience
-- **Web Dashboard**: Flask-based web interface for management
-- **Enhanced CLI**: Interactive command-line with AI commands
+- **Enhanced CLI**: Interactive command-line with AI commands (Primary Interface)
+- **Web Dashboard**: Under development (temporarily disabled)
 - **User Management**: Multi-tier user system with activity tracking
 - **Mobile Support**: Compatible with Termux/Android
 
@@ -106,10 +106,11 @@ $ python -m omniscraper.cli reddit "technology" --limit 50
 $ python -m omniscraper.cli twitter "#AI" --count 100
 ```
 
-**Web Dashboard:**
+**Web Dashboard (Temporarily Disabled):**
 ```bash
-# Launch web management interface
-$ python -m omniscraper.cli dashboard
+# Web dashboard is under development
+# All functionality available through CLI commands
+$ python -m omniscraper.cli --help
 ```
 
 **Advanced Features:**

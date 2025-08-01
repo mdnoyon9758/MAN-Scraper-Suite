@@ -413,18 +413,24 @@ def smart_filter(ctx, data_file: str, criteria: str, output: Optional[str]):
 @cli.command()
 @click.pass_context
 def dashboard(ctx):
-    """🌐 Launch web dashboard"""
-    click.echo("🚀 Starting MAN Scraper Suite Web Dashboard...")
-    click.echo("📍 Dashboard will be available at: http://localhost:5000")
-    click.echo("⚠️  Note: This is a development server. Use Gunicorn for production.")
+    """🌐 Launch web dashboard (TEMPORARILY DISABLED)"""
+    click.echo("⚠️  Web Dashboard temporarily disabled (under development)")
+    click.echo("💡 All functionality available through CLI commands")
+    click.echo("📖 Use --help to see available commands")
+    return
     
-    try:
-        from .dash.web_dashboard import app
-        app.run(host='0.0.0.0', port=5000, debug=False)
-    except ImportError:
-        click.echo("❌ Web dashboard not available. Install Flask: pip install flask")
-    except Exception as e:
-        click.echo(f"❌ Error starting dashboard: {e}")
+    # DISABLED TEMPORARILY - UNDER DEVELOPMENT
+    # click.echo("🚀 Starting MAN Scraper Suite Web Dashboard...")
+    # click.echo("📍 Dashboard will be available at: http://localhost:5000")
+    # click.echo("⚠️  Note: This is a development server. Use Gunicorn for production.")
+    # 
+    # try:
+    #     from .dash.web_dashboard import app
+    #     app.run(host='0.0.0.0', port=5000, debug=False)
+    # except ImportError:
+    #     click.echo("❌ Web dashboard not available. Install Flask: pip install flask")
+    # except Exception as e:
+    #     click.echo(f"❌ Error starting dashboard: {e}")
 
 @cli.command()
 @click.pass_context

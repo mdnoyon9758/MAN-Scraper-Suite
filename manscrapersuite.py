@@ -148,7 +148,7 @@ def print_banner():
 ║  ✓ Database Direct (MySQL, PostgreSQL, MongoDB)          ║
 ║  ✓ Automation & Scheduling                               ║
 ║  ✓ Privacy & Stealth (Proxies, User-Agent Spoofing)      ║
-║  ✓ CLI & GUI Interfaces                                   ║
+║  ✓ CLI Interface (GUI under development)                  ║
 ║  ✓ Mobile Support (Termux/Android)                       ║
 ║                                                           ║
 ║  License: GPLv3 | Community-Driven | No Paywalls        ║
@@ -259,8 +259,9 @@ def interactive_mode():
             elif choice == '4':
                 contact_flow()
             elif choice == '5':
-                print("🚀 Launching Web Dashboard...")
-                run_cli(['dashboard'])
+                print("⚠️  Web Dashboard temporarily disabled (under development)")
+                print("💡 Use CLI commands for all functionality")
+                # run_cli(['dashboard'])  # Disabled temporarily
             elif choice == '6':
                 run_cli(['config-show'])
             else:
@@ -358,9 +359,12 @@ For full CLI features, use: python -m omniscraper.cli --help
         elif args.config_show:
             cli_args = ['config-show']
         elif args.dashboard:
-            cli_args = ['dashboard']
-            if args.port != 5000:
-                cli_args.extend(['--port', str(args.port)])
+            print("⚠️  Web Dashboard temporarily disabled (under development)")
+            print("💡 Use CLI commands: python manscrapersuite.py --help")
+            return
+            # cli_args = ['dashboard']  # Disabled temporarily
+            # if args.port != 5000:
+            #     cli_args.extend(['--port', str(args.port)])
         elif args.scrape:
             cli_args = ['scrape', args.scrape]
             if args.dynamic:
