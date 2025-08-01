@@ -1,0 +1,53 @@
+# Configuration for OmniScraper
+
+delays:
+  default: 1.0
+  randomize_ratio: 0.3
+
+user_agents:
+  - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
+  - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
+
+headers:
+  default:
+    accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+    accept-language: "en-US,en;q=0.5"
+    accept-encoding: "gzip, deflate, br"
+
+# Example start URLs if needed
+start_urls:
+  - "https://example.com"
+  - "https://another-example.com"
+
+output:
+  directory: "./output"
+  format: "json"
+
+proxies:
+  use_proxy: True
+  proxy_list: "proxies.txt"
+
+tor:
+  use_tor: False
+
+# Google Sheets Integration
+google_sheets:
+  enabled: true
+  service_account_file: "./credentials/scraper-467614-c06499213741.json"
+  credentials_file: "./credentials/client_secret.json"
+  auto_create: true
+  folder_id: null
+  spreadsheet_id: null
+
+# Google Drive Integration  
+cloud:
+  google_drive:
+    enabled: true
+    credentials_file: "./credentials/client_secret.json"
+    folder_id: null
+
+# Logging
+logging:
+  level: "INFO"
+  file: "omniscraper.log"
+
