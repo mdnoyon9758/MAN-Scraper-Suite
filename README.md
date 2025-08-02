@@ -2,8 +2,8 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/man-scraper-suite.svg)](https://github.com/yourusername/man-scraper-suite/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/man-scraper-suite.svg)](https://github.com/yourusername/man-scraper-suite/issues)
+[![GitHub stars](https://img.shields.io/github/stars/mdnoyon9758/MAN-Scraper-Suite.svg)](https://github.com/mdnoyon9758/MAN-Scraper-Suite/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/mdnoyon9758/MAN-Scraper-Suite.svg)](https://github.com/mdnoyon9758/MAN-Scraper-Suite/issues)
 
  **100% FREE - NO LIMITS - ALL FEATURES UNLOCKED**
 
@@ -72,8 +72,8 @@ MAN Scraper Suite is a 100% free web scraping and automation toolkit that provid
 
 Clone the repository and navigate to the directory:
 ```bash
-$ git clone https://github.com/manscrapersuite/manscrapersuite.git
-$ cd manscrapersuite
+$ git clone https://github.com/mdnoyon9758/MAN-Scraper-Suite.git
+$ cd MAN-Scraper-Suite
 ```
 
 Install required dependencies:
