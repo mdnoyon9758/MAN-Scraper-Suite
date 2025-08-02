@@ -27,17 +27,28 @@ from ..core.engine import UniversalScraper
 
 class TwitterScraper:
     """
-    Twitter scraping class without API keys, uses Selenium
+    Twitter scraping class - now requires authentication due to Twitter/X policy changes
     """
 
     def __init__(self, config: Dict[str, Any]):
         self.config = config
-
-        # Setup Selenium WebDriver with headless options
-        chrome_options = Options()
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--no-sandbox')
-        self.driver = webdriver.Chrome(options=chrome_options)
+        self.has_credentials = self._check_twitter_credentials()
+        
+        if not self.has_credentials:
+            print("⚠️  Twitter/X now requires authentication for scraping.")
+            print("💡 Options:")
+            print("   1. Use Twitter API (recommended)")
+            print("   2. Manual login (not recommended for automation)")
+            print("   3. Try alternative platforms like Reddit, LinkedIn, etc.")
+            
+    def _check_twitter_credentials(self) -> bool:
+        """Check if Twitter API credentials are available"""
+        twitter_config = self.config.get('social_media', {}).get('twitter', {})
+        return bool(
+            twitter_config.get('api_key') and 
+            twitter_config.get('api_secret') and
+            twitter_config.get('bearer_token')
+        )
 
     def scrape_tweets_no_api(self, keyword: str, quantity: int = 20) -> List[Dict[str, Any]]:
         """
