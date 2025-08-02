@@ -1,4 +1,11 @@
-# MAN Scraper Suite
+# 🔥 MAN Scraper Suite
+
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/man-scraper-suite.svg)](https://github.com/yourusername/man-scraper-suite/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/yourusername/man-scraper-suite.svg)](https://github.com/yourusername/man-scraper-suite/issues)
+
+ **100% FREE - NO LIMITS - ALL FEATURES UNLOCKED**
 
 MAN Scraper Suite is a 100% free web scraping and automation toolkit that provides all premium features without limits. Designed for ethical data extraction, it supports scraping across websites, social media platforms, and public APIs without any paywalls or subscriptions.
 

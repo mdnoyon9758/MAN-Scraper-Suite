@@ -1,0 +1,149 @@
+# MAN Scraper Suite - No API Keys Configuration
+# This configuration disables all features that require API keys
+
+# Basic scraping settings
+scraping:
+  delay: 1.0
+  timeout: 30
+  retries: 3
+  concurrent_requests: 4
+  respect_robots: true
+  user_agent_rotation: true
+  headless: true
+  javascript_enabled: true
+  cookies_enabled: true
+  images_enabled: false
+  css_enabled: false
+
+# Stealth settings (no proxy/Tor)
+stealth:
+  proxy_rotation: false
+  tor_proxy: false
+  random_delays: true
+  fake_headers: true
+  browser_automation: "requests"  # Use requests instead of playwright for simplicity
+  captcha_solver: "disabled"
+
+# Export settings
+export:
+  default_format: "json"
+  output_dir: "W:\\"
+  filename_template: "{site}_{timestamp}"
+  include_metadata: true
+  compress_output: false
+
+# Database (disabled)
+database:
+  enabled: false
+  type: null
+  host: "localhost"
+  port: null
+  database: "manscrapersuite"
+  username: null
+  password: null
+
+# Cloud storage (disabled)
+cloud:
+  google_drive:
+    enabled: false
+    folder_id: null
+    credentials_file: null
+  dropbox:
+    enabled: false
+    access_token: null
+
+# Google Sheets (disabled)
+google_sheets:
+  enabled: false
+  service_account_file: null
+  credentials_file: null
+  spreadsheet_id: null
+  folder_id: null
+  auto_create: false
+  auto_share: false
+  share_emails: []
+
+# Notifications (disabled)
+notifications:
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    username: null
+    password: null
+    recipients: []
+  telegram:
+    enabled: false
+    bot_token: null
+    chat_id: null
+
+# Social Media (disabled - no API keys)
+social_media:
+  twitter:
+    enabled: false
+    api_key: null
+    api_secret: null
+    access_token: null
+    access_token_secret: null
+    bearer_token: null
+  reddit:
+    enabled: false
+    client_id: null
+    client_secret: null
+    user_agent: "MAN Scraper Suite/1.0"
+
+# Captcha solving (disabled)
+captcha:
+  enabled: false
+  2captcha_api_key: null
+  anticaptcha_api_key: null
+
+# AI features (disabled)
+ai:
+  enabled: false
+  gemini_api_key: null
+  deepseek_api_key: null
+  model: "gemini-1.5-flash"
+  temperature: 0.7
+  max_tokens: 1000
+
+# Analytics (basic only)
+analytics:
+  enabled: true
+  dashboard_port: 5000
+  export_charts: true
+  anomaly_detection: false  # Disabled to avoid complex dependencies
+
+# Compliance (basic settings)
+compliance:
+  gdpr_mode: true
+  data_anonymization: true
+  audit_logging: true
+  ethical_scraping: true
+
+# User agents
+user_agents:
+  - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  - "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+# Headers
+headers:
+  default:
+    accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+    accept-language: "en-US,en;q=0.5"
+    accept-encoding: "gzip, deflate"
+    connection: "keep-alive"
+    upgrade-insecure-requests: "1"
+
+# Output settings
+output:
+  directory: "./output"
+  format: "json"
+  max_file_size: "50MB"
+  
+# Logging
+logging:
+  level: "INFO"
+  file: "manscrapersuite_no_api.log"
+  console: true

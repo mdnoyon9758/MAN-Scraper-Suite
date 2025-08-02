@@ -162,39 +162,39 @@ class OmniScraperGUI:
         social_frame = ttk.Frame(self.notebook)
         self.notebook.add(social_frame, text="📱 Social Media")
         
-        # Twitter section
-        twitter_frame = ttk.LabelFrame(social_frame, text="🐦 Twitter", padding=10)
+        # Twitter section (No API)
+        twitter_frame = ttk.LabelFrame(social_frame, text="🐦 Twitter (No API)", padding=10)
         twitter_frame.pack(fill=tk.X, padx=10, pady=10)
         
-        ttk.Label(twitter_frame, text="Hashtag (without #):").pack(anchor=tk.W)
-        self.twitter_hashtag_entry = tk.Entry(twitter_frame, font=("Arial", 10))
-        self.twitter_hashtag_entry.pack(fill=tk.X, pady=(0, 5))
+        ttk.Label(twitter_frame, text="Keyword/Topic:").pack(anchor=tk.W)
+        self.twitter_keyword_entry = tk.Entry(twitter_frame, font=("Arial", 10))
+        self.twitter_keyword_entry.pack(fill=tk.X, pady=(0, 5))
         
         twitter_options = ttk.Frame(twitter_frame)
         twitter_options.pack(fill=tk.X)
         
         ttk.Label(twitter_options, text="Count:").pack(side=tk.LEFT)
-        self.twitter_count = tk.IntVar(value=100)
-        ttk.Spinbox(twitter_options, from_=1, to=1000, textvariable=self.twitter_count, width=10).pack(side=tk.LEFT, padx=(5, 20))
+        self.twitter_count = tk.IntVar(value=20)
+        ttk.Spinbox(twitter_options, from_=1, to=100, textvariable=self.twitter_count, width=10).pack(side=tk.LEFT, padx=(5, 20))
         
-        ttk.Button(twitter_options, text="🐦 Scrape Tweets", command=self.scrape_twitter).pack(side=tk.LEFT)
+        ttk.Button(twitter_options, text="🐦 Scrape Tweets (No API)", command=self.scrape_twitter).pack(side=tk.LEFT)
         
-        # Reddit section
-        reddit_frame = ttk.LabelFrame(social_frame, text="📱 Reddit", padding=10)
+        # Reddit section (Topic-based)
+        reddit_frame = ttk.LabelFrame(social_frame, text="📱 Reddit (Topic-based)", padding=10)
         reddit_frame.pack(fill=tk.X, padx=10, pady=10)
         
-        ttk.Label(reddit_frame, text="Subreddit (without r/):").pack(anchor=tk.W)
-        self.reddit_subreddit_entry = tk.Entry(reddit_frame, font=("Arial", 10))
-        self.reddit_subreddit_entry.pack(fill=tk.X, pady=(0, 5))
+        ttk.Label(reddit_frame, text="Topic/Keyword:").pack(anchor=tk.W)
+        self.reddit_topic_entry = tk.Entry(reddit_frame, font=("Arial", 10))
+        self.reddit_topic_entry.pack(fill=tk.X, pady=(0, 5))
         
         reddit_options = ttk.Frame(reddit_frame)
         reddit_options.pack(fill=tk.X)
         
         ttk.Label(reddit_options, text="Limit:").pack(side=tk.LEFT)
-        self.reddit_limit = tk.IntVar(value=25)
-        ttk.Spinbox(reddit_options, from_=1, to=100, textvariable=self.reddit_limit, width=10).pack(side=tk.LEFT, padx=(5, 20))
+        self.reddit_limit = tk.IntVar(value=10)
+        ttk.Spinbox(reddit_options, from_=1, to=50, textvariable=self.reddit_limit, width=10).pack(side=tk.LEFT, padx=(5, 20))
         
-        ttk.Button(reddit_options, text="📱 Scrape Posts", command=self.scrape_reddit).pack(side=tk.LEFT)
+        ttk.Button(reddit_options, text="📱 Scrape by Topic", command=self.scrape_reddit).pack(side=tk.LEFT)
         
         # Social media results
         ttk.Label(social_frame, text="Social Media Results:", font=("Arial", 12, "bold")).pack(anchor=tk.W, padx=10, pady=(20, 5))
@@ -393,80 +393,80 @@ class OmniScraperGUI:
             self.is_scraping = False
     
     def scrape_twitter(self):
-        """Handle Twitter scraping"""
-        hashtag = self.twitter_hashtag_entry.get().strip()
-        if not hashtag:
-            messagebox.showerror("Error", "Please enter a hashtag")
+        """Handle Twitter scraping without API"""
+        keyword = self.twitter_keyword_entry.get().strip()
+        if not keyword:
+            messagebox.showerror("Error", "Please enter a keyword/topic")
             return
         
         count = self.twitter_count.get()
-        self.run_in_thread(self._scrape_twitter, hashtag, count)
+        self.run_in_thread(self._scrape_twitter, keyword, count)
     
-    def _scrape_twitter(self, hashtag, count):
-        """Internal method to scrape Twitter"""
+    def _scrape_twitter(self, keyword, count):
+        """Internal method to scrape Twitter without API"""
         try:
-            self.status_var.set(f"Scraping Twitter #{hashtag}...")
+            self.status_var.set(f"Scraping Twitter for '{keyword}'...")
             
             scraper = TwitterScraper(self.config.config)
-            tweets = scraper.scrape_tweets(hashtag, count)
+            tweets = scraper.scrape_tweets_no_api(keyword, count)
             
             if tweets:
                 # Export data
                 exporter = DataExporter(self.config.config)
-                filename = f"twitter_{hashtag}_{int(time.time())}"
+                filename = f"twitter_{keyword.replace(' ', '_')}_{int(time.time())}"
                 filepath = exporter.export_to_json(tweets, filename)
                 
-                result_msg = f"✅ Twitter: Scraped {len(tweets)} tweets for #{hashtag}\n📁 Saved to: {filepath}\n\n"
+                result_msg = f"✅ Twitter: Scraped {len(tweets)} tweets for '{keyword}'\n📁 Saved to: {filepath}\n\n"
                 self.social_results_text.insert(tk.END, result_msg)
                 self.social_results_text.see(tk.END)
                 
                 self.status_var.set(f"Twitter scraping completed - {len(tweets)} tweets")
             else:
-                error_msg = f"❌ No tweets found for #{hashtag}\n\n"
+                error_msg = f"❌ No tweets found for '{keyword}'\n\n"
                 self.social_results_text.insert(tk.END, error_msg)
                 self.status_var.set("No tweets found")
                 
         except Exception as e:
-            error_msg = f"❌ Error scraping Twitter #{hashtag}: {str(e)}\n\n"
+            error_msg = f"❌ Error scraping Twitter for '{keyword}': {str(e)}\n\n"
             self.social_results_text.insert(tk.END, error_msg)
             self.status_var.set("Twitter error occurred")
     
     def scrape_reddit(self):
-        """Handle Reddit scraping"""
-        subreddit = self.reddit_subreddit_entry.get().strip()
-        if not subreddit:
-            messagebox.showerror("Error", "Please enter a subreddit")
+        """Handle Reddit topic-based scraping"""
+        topic = self.reddit_topic_entry.get().strip()
+        if not topic:
+            messagebox.showerror("Error", "Please enter a topic")
             return
         
         limit = self.reddit_limit.get()
-        self.run_in_thread(self._scrape_reddit, subreddit, limit)
+        self.run_in_thread(self._scrape_reddit, topic, limit)
     
-    def _scrape_reddit(self, subreddit, limit):
-        """Internal method to scrape Reddit"""
+    def _scrape_reddit(self, topic, limit):
+        """Internal method to scrape Reddit by topic"""
         try:
-            self.status_var.set(f"Scraping Reddit r/{subreddit}...")
+            self.status_var.set(f"Scraping Reddit for '{topic}'...")
             
             scraper = RedditScraper(self.config.config)
-            posts = scraper.scrape_subreddit_posts(subreddit, limit)
+            posts = scraper.scrape_posts_by_topic(topic, limit)
             
             if posts:
                 # Export data
                 exporter = DataExporter(self.config.config)
-                filename = f"reddit_{subreddit}_{int(time.time())}"
+                filename = f"reddit_{topic.replace(' ', '_')}_{int(time.time())}"
                 filepath = exporter.export_to_json(posts, filename)
                 
-                result_msg = f"✅ Reddit: Scraped {len(posts)} posts from r/{subreddit}\n📁 Saved to: {filepath}\n\n"
+                result_msg = f"✅ Reddit: Scraped {len(posts)} posts for '{topic}'\n📁 Saved to: {filepath}\n\n"
                 self.social_results_text.insert(tk.END, result_msg)
                 self.social_results_text.see(tk.END)
                 
                 self.status_var.set(f"Reddit scraping completed - {len(posts)} posts")
             else:
-                error_msg = f"❌ No posts found in r/{subreddit}\n\n"
+                error_msg = f"❌ No posts found for '{topic}'\n\n"
                 self.social_results_text.insert(tk.END, error_msg)
                 self.status_var.set("No posts found")
                 
         except Exception as e:
-            error_msg = f"❌ Error scraping Reddit r/{subreddit}: {str(e)}\n\n"
+            error_msg = f"❌ Error scraping Reddit for '{topic}': {str(e)}\n\n"
             self.social_results_text.insert(tk.END, error_msg)
             self.status_var.set("Reddit error occurred")
     

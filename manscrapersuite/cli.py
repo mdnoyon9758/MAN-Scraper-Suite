@@ -48,6 +48,11 @@ try:
     from .scrapers.social_scraper import TwitterScraper, RedditScraper
 except ImportError:
     TwitterScraper = RedditScraper = None
+
+try:
+    from .scrapers.url_generator import URLGenerator
+except ImportError:
+    URLGenerator = None
     
 try:
     from .scrapers.pdf_scraper import PDFScraper
@@ -68,6 +73,18 @@ try:
     from .exporters.database_exporter import DatabaseExporter
 except ImportError:
     DatabaseExporter = None
+
+# Google Authentication Imports
+try:
+    from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from googleapiclient.discovery import build
+except ImportError:
+    print("❌ Missing dependencies for Google Authentication")
+    sys.exit(1)
+
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # NEW PHASE 5-7 IMPORTS
 try:
@@ -180,29 +197,29 @@ def scrape_multiple(ctx, urls: List[str], dynamic: bool, output: Optional[str], 
         click.echo(f"❌ Error scraping multiple URLs: {e}")
 
 @cli.command()
-@click.argument('hashtag')
-@click.option('--count', '-n', type=int, default=100, help='Number of tweets to scrape')
+@click.argument('keyword')
+@click.option('--count', '-n', type=int, default=20, help='Number of tweets to scrape')
 @click.option('--output', '-o', type=str, help='Output filename')
 @click.pass_context
-def twitter(ctx, hashtag: str, count: int, output: Optional[str]):
-    """Scrape Twitter tweets by hashtag"""
+def twitter(ctx, keyword: str, count: int, output: Optional[str]):
+    """Scrape Twitter tweets by keyword (No API required)"""
     if TwitterScraper is None:
-        click.echo("❌ Twitter scraping not available. Install twython: pip install twython")
+        click.echo("❌ Twitter scraping not available. Missing dependencies.")
         return
         
     config = ctx.obj['config']
     
-    click.echo(f"🐦 Scraping Twitter hashtag: #{hashtag}")
+    click.echo(f"🐦 Scraping Twitter for keyword: '{keyword}' (No API)")
     
     try:
         scraper = TwitterScraper(config.config)
-        tweets = scraper.scrape_tweets(hashtag, count)
+        tweets = scraper.scrape_tweets_no_api(keyword, count)
         
         if tweets:
             exporter = DataExporter(config.config)
             
             if not output:
-                output = f"twitter_{hashtag}_{int(time.time())}"
+                output = f"twitter_{keyword.replace(' ', '_')}_{int(time.time())}"
             
             filepath = exporter.export_to_json(tweets, output)
             click.echo(f"✅ {len(tweets)} tweets saved to: {filepath}")
@@ -240,6 +257,81 @@ def reddit(ctx, subreddit: str, limit: int, output: Optional[str]):
             
     except Exception as e:
         click.echo(f"❌ Error scraping Reddit: {e}")
+
+@cli.command()
+@click.argument('topic')
+@click.option('--limit', '-l', type=int, default=10, help='Number of posts to scrape')
+@click.option('--output', '-o', type=str, help='Output filename')
+@click.pass_context
+def reddit_topic(ctx, topic: str, limit: int, output: Optional[str]):
+    """Scrape Reddit posts by topic (No API required)"""
+    if RedditScraper is None:
+        click.echo("❌ Reddit scraping not available. Missing dependencies.")
+        return
+        
+    config = ctx.obj['config']
+    
+    click.echo(f"📱 Scraping Reddit for topic: '{topic}' (No API)")
+    
+    try:
+        scraper = RedditScraper(config.config)
+        posts = scraper.scrape_posts_by_topic(topic, limit)
+        
+        if posts:
+            exporter = DataExporter(config.config)
+            
+            if not output:
+                output = f"reddit_{topic.replace(' ', '_')}_{int(time.time())}"
+            
+            filepath = exporter.export_to_json(posts, output)
+            click.echo(f"✅ {len(posts)} posts saved to: {filepath}")
+        else:
+            click.echo("❌ No posts found")
+            
+    except Exception as e:
+        click.echo(f"❌ Error scraping Reddit by topic: {e}")
+
+@cli.command()
+@click.argument('topic')
+@click.option('--content-type', '-t', type=click.Choice(['general', 'news', 'social', 'academic', 'shopping', 'images', 'videos']), default='general', help='Content type for URL generation')
+@click.option('--limit', '-l', type=int, default=5, help='Number of URLs to generate')
+@click.option('--ai', is_flag=True, help='Use AI for smart URL generation')
+@click.pass_context
+def generate_urls(ctx, topic: str, content_type: str, limit: int, ai: bool):
+    """🔗 Generate URLs automatically based on topic"""
+    if URLGenerator is None:
+        click.echo("❌ URL generator not available. Missing dependencies.")
+        return
+        
+    config = ctx.obj['config']
+    
+    click.echo(f"🔗 Generating URLs for topic: '{topic}'")
+    click.echo(f"📊 Content type: {content_type}")
+    click.echo(f"🤖 AI mode: {'Enabled' if ai else 'Disabled'}")
+    
+    try:
+        generator = URLGenerator(config.config)
+        
+        if ai and AI_AVAILABLE:
+            urls = generator.ai_generate_urls(topic)
+            click.echo(f"🤖 AI-generated URLs:")
+        else:
+            urls = generator.generate_urls_by_topic(topic, content_type, limit)
+            click.echo(f"🔗 Pattern-based URLs:")
+        
+        for i, url in enumerate(urls, 1):
+            click.echo(f"  {i}. {url}")
+        
+        # Save URLs to file
+        output_file = f"generated_urls_{topic.replace(' ', '_')}_{int(time.time())}.txt"
+        with open(output_file, 'w') as f:
+            for url in urls:
+                f.write(url + '\n')
+        
+        click.echo(f"\n✅ URLs saved to: {output_file}")
+        
+    except Exception as e:
+        click.echo(f"❌ Error generating URLs: {e}")
 
 @cli.command()
 @click.argument('pdf_url')
@@ -348,6 +440,54 @@ def config_show(ctx):
     
     click.echo("⚙️  Current Configuration:")
     click.echo(json.dumps(safe_config, indent=2))
+
+@cli.command()
+@click.pass_context
+def google_auth(ctx):
+    """Authenticate using Google OAuth and save the session details to Google Sheets"""
+    creds = None
+
+    # Check for existing credentials
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+
+    # If there are no valid credentials, request a new one
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials/client_secret.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+
+        # Save the credentials for future use
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+
+    # Prepare the Google Sheets API
+    try:
+        service = build('sheets', 'v4', credentials=creds)
+
+        # Sheet ID and range
+        SPREADSHEET_ID = 'your_spreadsheet_id_here'
+        RANGE_NAME = 'Sheet1!A1:C1'
+
+        # Values to append
+        values = [
+            ['User', time.strftime("%Y-%m-%d %H:%M:%S"), 'Authenticated']
+        ]
+        body = {
+            'values': values
+        }
+
+        # Append values to the sheet
+        result = service.spreadsheets().values().append(
+            spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME,
+            valueInputOption="USER_ENTERED", body=body).execute()
+        click.echo("✅ Logged authentication to Google Sheets")
+
+    except Exception as e:
+        click.echo(f"❌ Error using Google Sheets API: {e}")
 
 # NEW AI AND ANALYTICS COMMANDS
 @cli.command()

@@ -8,10 +8,56 @@ from typing import List, Dict, Any, Optional
 import scrapy
 from ..core.engine import UniversalScraper
 
+import random
+from urllib.parse import urlparse, urljoin
+import requests
+
 class WebScraper:
     """
-    General web scraping class, supports static and dynamic pages
+    Enhanced web scraping class with support for URL validation,
+    SPAs, and anti-detection measures
     """
+    user_agents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0"
+    ]
+
+    def validate_url(self, url: str) -> Optional[str]:
+        """
+        Validate and correct URL if needed
+        """
+        parsed = urlparse(url)
+        if not parsed.scheme:
+            url = 'https://' + url
+        if urlparse(url).hostname:
+            return url
+        return None
+
+    def fetch_html(self, url: str, dynamic: bool = False) -> Optional[str]:
+        """
+        Fetch HTML content, using dynamic methods if required
+        """
+        # Rotate user-agent
+        headers = {'User-Agent': random.choice(self.user_agents)}
+
+        if dynamic:
+            # Placeholder for Selenium/Playwright
+            return self.engine.fetch_using_selenium(url)
+        else:
+            response = requests.get(url, headers=headers, proxies=self.get_random_proxy())
+            if response.status_code == 200:
+                return response.content
+        return None
+
+    def get_random_proxy(self) -> Optional[Dict[str, str]]:
+        """
+        Fetch random proxy from the configured list
+        """
+        proxies = self.config.get('proxies', [])
+        if proxies:
+            return {'http': random.choice(proxies)}
+        return None
 
     def __init__(self, config: Dict[str, Any]):
         self.config = config    
@@ -21,7 +67,15 @@ class WebScraper:
         """
         Scrape a single webpage
         """
-        return self.engine.fetch_content(url, dynamic)
+        valid_url = self.validate_url(url)
+        if not valid_url:
+            print(f"Invalid URL: {url}")
+            return None
+
+        content = self.fetch_html(valid_url, dynamic)
+        if content:
+            return {'url': valid_url, 'content': content}
+        return None
 
     def scrape_multiple_pages(self, urls: List[str], dynamic: bool = False) -> List[Optional[Dict[str, Any]]]:
         """
