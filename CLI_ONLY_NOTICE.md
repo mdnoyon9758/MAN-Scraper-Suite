@@ -28,7 +28,7 @@ python manscrapersuite.py --help
 python manscrapersuite.py --interactive
 
 # Direct CLI access
-python -m omniscraper.cli --help
+python -m manscrapersuite.cli --help
 ```
 
 ### Web Dashboard Status

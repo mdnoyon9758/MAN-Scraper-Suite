@@ -4,17 +4,44 @@ Command Line Interface for MAN Scraper Suite
 Provides all functionality through terminal commands
 """
 
-import click
+import sys
+import os
 import json
 import time
 from pathlib import Path
 from typing import Optional, List
 
-from .core.config import Config
-from .core.engine import UniversalScraper
-from .scrapers.web_scraper import WebScraper
-from .exporters.data_exporter import DataExporter
-from .stealth.proxy_manager import ProxyManager
+# Add basic error handling for missing dependencies
+try:
+    import click
+except ImportError:
+    print("❌ Missing dependency: click")
+    print("💡 Install with: pip install click")
+    sys.exit(1)
+
+# Core imports with error handling
+try:
+    from .core.config import Config
+except ImportError:
+    # Fallback basic config class
+    class Config:
+        def __init__(self, config_file=None):
+            self.config = {}
+
+try:
+    from .scrapers.web_scraper import WebScraper
+except ImportError:
+    WebScraper = None
+    
+try:
+    from .exporters.data_exporter import DataExporter
+except ImportError:
+    DataExporter = None
+    
+try:
+    from .stealth.proxy_manager import ProxyManager
+except ImportError:
+    ProxyManager = None
 
 # Optional imports
 try:

@@ -79,50 +79,50 @@ $ pip install -r requirements.txt
 **Basic Web Scraping:**
 ```bash
 # Scrape a single webpage
-$ python -m omniscraper.cli scrape "https://example.com" --format pdf
+$ python -m manscrapersuite.cli scrape "https://example.com" --format pdf
 
 # Scrape multiple URLs
-$ python -m omniscraper.cli scrape-multiple "https://site1.com" "https://site2.com" --format csv
+$ python -m manscrapersuite.cli scrape-multiple "https://site1.com" "https://site2.com" --format csv
 
 # Dynamic JavaScript scraping
-$ python -m omniscraper.cli scrape "https://spa-site.com" --dynamic --format excel
+$ python -m manscrapersuite.cli scrape "https://spa-site.com" --dynamic --format excel
 ```
 
 **AI-Powered Features:**
 ```bash
 # Analyze scraped data with AI
-$ python -m omniscraper.cli analyze data.json --topic "market trends"
+$ python -m manscrapersuite.cli analyze data.json --topic "market trends"
 
 # Smart data filtering
-$ python -m omniscraper.cli smart-filter data.json --criteria "technology news" --output filtered
+$ python -m manscrapersuite.cli smart-filter data.json --criteria "technology news" --output filtered
 ```
 
 **Social Media Scraping:**
 ```bash
 # Scrape Reddit posts
-$ python -m omniscraper.cli reddit "technology" --limit 50
+$ python -m manscrapersuite.cli reddit "technology" --limit 50
 
 # Scrape Twitter hashtags
-$ python -m omniscraper.cli twitter "#AI" --count 100
+$ python -m manscrapersuite.cli twitter "#AI" --count 100
 ```
 
 **Web Dashboard (Temporarily Disabled):**
 ```bash
 # Web dashboard is under development
 # All functionality available through CLI commands
-$ python -m omniscraper.cli --help
+$ python -m manscrapersuite.cli --help
 ```
 
 **Advanced Features:**
 ```bash
 # Test proxy connections
-$ python -m omniscraper.cli proxy-test
+$ python -m manscrapersuite.cli proxy-test
 
 # Show configuration
-$ python -m omniscraper.cli config-show
+$ python -m manscrapersuite.cli config-show
 
 # Check version and features
-$ python -m omniscraper.cli version
+$ python -m manscrapersuite.cli version
 ```
 
 4. **Configuration**:

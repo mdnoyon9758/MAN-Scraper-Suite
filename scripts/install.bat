@@ -1,8 +1,8 @@
 @echo off
-REM OmniScraper Installation Script for Windows
+REM MAN Scraper Suite Installation Script for Windows
 REM 100% Free Web Scraping & Automation Toolkit
 
-echo 🔥 OmniScraper Installation Script
+echo 🔥 MAN Scraper Suite Installation Script
 echo ======================================
 echo Installing 100% Free Web Scraping & Automation Toolkit
 echo No limits, no paywalls, all premium features unlocked!
@@ -33,23 +33,23 @@ if %errorlevel% neq 0 (
 echo [INFO] Upgrading pip...
 python -m pip install --upgrade pip
 
-echo [INFO] Installing OmniScraper...
+echo [INFO] Installing MAN Scraper Suite...
 if exist setup.py (
     echo [INFO] Installing in development mode...
     python -m pip install -e .
 ) else (
     echo [INFO] Installing from PyPI...
-    python -m pip install omniscraper
+    python -m pip install manscrapersuite
 )
 
 echo [INFO] Installing GUI dependencies...
-python -m pip install "omniscraper[gui]"
+python -m pip install "manscrapersuite[gui]"
 
 echo [INFO] Installing Playwright browsers...
 python -m playwright install
 
 echo [INFO] Testing installation...
-python -c "import omniscraper; print('✓ OmniScraper imported successfully')"
+python -c "import manscrapersuite; print('✓ MAN Scraper Suite imported successfully')"
 if %errorlevel% neq 0 (
     echo [ERROR] Installation test failed
     pause
@@ -59,16 +59,16 @@ if %errorlevel% neq 0 (
 echo.
 echo 🎉 Installation Complete!
 echo.
-echo OmniScraper has been successfully installed!
+echo MAN Scraper Suite has been successfully installed!
 echo 100%% Free - No Limits - All Features Unlocked
 echo.
 echo Quick Start:
-echo   CLI: omniscraper --help
-echo   GUI: omniscraper-gui
-echo   Python: python -c "import omniscraper; omniscraper.print_banner()"
+echo   CLI: manscrapersuite --help
+echo   GUI: manscrapersuite-gui
+echo   Python: python -c "import manscrapersuite; manscrapersuite.print_banner()"
 echo.
-echo Documentation: https://omniscraper.readthedocs.io/
-echo Repository: https://github.com/omniscraper/omniscraper
+echo Documentation: https://manscrapersuite.readthedocs.io/
+echo Repository: https://github.com/manscrapersuite/manscrapersuite
 echo.
 echo 🚀 Happy Scraping!
 echo.

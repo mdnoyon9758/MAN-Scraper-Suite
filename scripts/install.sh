@@ -1,10 +1,10 @@
 #!/bin/bash
-# OmniScraper Installation Script
+# MAN Scraper Suite Installation Script
 # 100% Free Web Scraping & Automation Toolkit
 
 set -e
 
-echo "🔥 OmniScraper Installation Script"
+echo "🔥 MAN Scraper Suite Installation Script"
 echo "======================================"
 echo "Installing 100% Free Web Scraping & Automation Toolkit"
 echo "No limits, no paywalls, all premium features unlocked!"
@@ -120,9 +120,9 @@ install_playwright() {
     fi
 }
 
-# Install OmniScraper
-install_omniscraper() {
-    print_header "Installing OmniScraper..."
+# Install MAN Scraper Suite
+install_manscrapersuite() {
+    print_header "Installing MAN Scraper Suite..."
     
     # Upgrade pip first
     print_status "Upgrading pip..."
@@ -130,16 +130,16 @@ install_omniscraper() {
     
     # Install from current directory (development mode)
     if [ -f "setup.py" ]; then
-        print_status "Installing OmniScraper in development mode..."
+        print_status "Installing MAN Scraper Suite in development mode..."
         $PIP_CMD install -e .
     else
-        print_status "Installing OmniScraper from PyPI..."
-        $PIP_CMD install omniscraper
+        print_status "Installing MAN Scraper Suite from PyPI..."
+        $PIP_CMD install manscrapersuite
     fi
     
     # Install optional dependencies for GUI
     print_status "Installing GUI dependencies..."
-    $PIP_CMD install "omniscraper[gui]" || print_warning "GUI dependencies installation failed (optional)"
+    $PIP_CMD install "manscrapersuite[gui]" || print_warning "GUI dependencies installation failed (optional)"
     
     # Install Playwright browsers
     install_playwright
@@ -150,19 +150,19 @@ create_desktop_shortcut() {
     if [[ "$OSTYPE" == "linux-gnu"* ]] && [ -d "$HOME/Desktop" ]; then
         print_header "Creating desktop shortcut..."
         
-        cat > "$HOME/Desktop/OmniScraper.desktop" << EOF
+        cat > "$HOME/Desktop/MAN_Scraper_Suite.desktop" << EOF
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=OmniScraper
+Name=MAN Scraper Suite
 Comment=100% Free Web Scraping & Automation Toolkit
-Exec=$PYTHON_CMD -m omniscraper.gui.main
+Exec=$PYTHON_CMD -m manscrapersuite.gui.main
 Icon=applications-internet
 Terminal=false
 Categories=Development;Network;
 EOF
         
-        chmod +x "$HOME/Desktop/OmniScraper.desktop"
+        chmod +x "$HOME/Desktop/MAN_Scraper_Suite.desktop"
         print_status "Desktop shortcut created ✓"
     fi
 }
@@ -172,7 +172,7 @@ test_installation() {
     print_header "Testing installation..."
     
     print_status "Testing CLI..."
-    if $PYTHON_CMD -c "import omniscraper; print('✓ OmniScraper imported successfully')"; then
+    if $PYTHON_CMD -c "import manscrapersuite; print('✓ MAN Scraper Suite imported successfully')"; then
         print_status "CLI test passed ✓"
     else
         print_error "CLI test failed"
@@ -180,7 +180,7 @@ test_installation() {
     fi
     
     print_status "Testing version..."
-    if $PYTHON_CMD -c "import omniscraper; print(f'Version: {omniscraper.__version__}')"; then
+    if $PYTHON_CMD -c "import manscrapersuite; print(f'Version: {manscrapersuite.__version__}')"; then
         print_status "Version test passed ✓"
     else
         print_warning "Version test failed (non-critical)"
@@ -189,29 +189,29 @@ test_installation() {
 
 # Main installation process
 main() {
-    print_header "🔥 Starting OmniScraper Installation"
+    print_header "🔥 Starting MAN Scraper Suite Installation"
     echo ""
     
     check_python
     check_pip
     install_system_deps
-    install_omniscraper
+    install_manscrapersuite
     create_desktop_shortcut
     test_installation
     
     echo ""
     print_header "🎉 Installation Complete!"
     echo ""
-    print_status "OmniScraper has been successfully installed!"
+    print_status "MAN Scraper Suite has been successfully installed!"
     print_status "100% Free - No Limits - All Features Unlocked"
     echo ""
     print_status "Quick Start:"
-    echo "  CLI: omniscraper --help"
-    echo "  GUI: omniscraper-gui"
-    echo "  Python: python3 -c 'import omniscraper; omniscraper.print_banner()'"
+    echo "  CLI: manscrapersuite --help"
+    echo "  GUI: manscrapersuite-gui"
+    echo "  Python: python3 -c 'import manscrapersuite; manscrapersuite.print_banner()'"
     echo ""
-    print_status "Documentation: https://omniscraper.readthedocs.io/"
-    print_status "Repository: https://github.com/omniscraper/omniscraper"
+    print_status "Documentation: https://manscrapersuite.readthedocs.io/"
+    print_status "Repository: https://github.com/manscrapersuite/manscrapersuite"
     echo ""
     print_status "🚀 Happy Scraping!"
 }

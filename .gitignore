@@ -162,7 +162,7 @@ logs/
 analytics/
 images/
 pdfs/
-OmniScraper_Data/
+MAN_Scraper_Suite_Data/
 
 # Ignore scraped data and outputs
 scraped_*

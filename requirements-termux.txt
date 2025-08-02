@@ -1,0 +1,40 @@
+# MAN Scraper Suite - Termux/Android Optimized Requirements
+# Lightweight version for mobile environments
+
+# Core Web Scraping (Essential)
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Data Processing (Essential)
+pandas>=2.1.0
+openpyxl>=3.1.0
+
+# Configuration
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# CLI & Utilities
+click>=8.1.0
+rich>=13.6.0
+tqdm>=4.66.0
+
+# Social Media APIs (Lightweight)
+praw>=7.7.0
+
+# Stealth & Proxy
+fake-useragent>=1.4.0
+
+# Cloud Storage (Google Sheets only for lightweight)
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+gspread>=5.12.0
+
+# Optional: PDF processing (lightweight alternative)
+PyPDF2>=3.0.0
+
+# Optional: Image processing (lightweight)
+Pillow>=10.0.0
+
+# Note: Heavy packages like Selenium, Playwright, and GUI libraries
+# are excluded for Termux compatibility. Use basic requests + BeautifulSoup instead.

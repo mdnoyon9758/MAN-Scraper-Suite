@@ -17,9 +17,9 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 # Google integration - real implementation
-from omniscraper.core.config import Config
+from manscrapersuite.core.config import Config
 try:
-    from omniscraper.exporters.google_sheets import upload_to_google_sheets as sheets_upload
+    from manscrapersuite.exporters.google_sheets import upload_to_google_sheets as sheets_upload
     GOOGLE_SHEETS_AVAILABLE = True
 except ImportError:
     GOOGLE_SHEETS_AVAILABLE = False
@@ -381,7 +381,7 @@ def main():
     parser.add_argument('--query', required=True, help="Search query or topic")
     parser.add_argument('--days', type=int, default=7, help="Specify the number of past days to include")
     parser.add_argument('--format', choices=FORMATS.keys(), required=True, help="Choose an output format")
-    parser.add_argument('--output', default='W:/OmniScraper_Data', help="Output directory path")
+    parser.add_argument('--output', default='W:/MAN_Scraper_Suite_Data', help="Output directory path")
     
     args = parser.parse_args()
     

@@ -18,13 +18,13 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-# Add the omniscraper package to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'omniscraper'))
+# Add the manscrapersuite package to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'manscrapersuite'))
 
 # Google integration - real implementation
-from omniscraper.core.config import Config
+from manscrapersuite.core.config import Config
 try:
-    from omniscraper.exporters.google_sheets import upload_to_google_sheets as sheets_upload
+    from manscrapersuite.exporters.google_sheets import upload_to_google_sheets as sheets_upload
     GOOGLE_SHEETS_AVAILABLE = True
 except ImportError:
     GOOGLE_SHEETS_AVAILABLE = False
@@ -104,7 +104,7 @@ def contact_flow():
     
     # Save to local file first
     try:
-        output_dir = Path("W:/OmniScraper_Data")
+        output_dir = Path("W:/MAN_Scraper_Suite_Data")
         output_dir.mkdir(parents=True, exist_ok=True)
         
         contact_file = output_dir / "contacts.json"
@@ -162,7 +162,7 @@ def print_banner():
 def run_cli(args):
     """Execute CLI commands"""
     try:
-        from omniscraper.cli import cli_main
+        from manscrapersuite.cli import cli_main
         # Filter out empty strings from args
         clean_args = [arg for arg in args if arg.strip()]
         sys.argv = ['cli'] + clean_args
@@ -231,10 +231,8 @@ def interactive_mode():
     options = [
       ("1", "🔍 Web Scraping"),
       ("2", "📱 Social Media Scraping"),
-      ("3", "🤖 AI Data Analysis"),
-      ("4", "📇 Save Contact"),
-      ("5", "🌐 Launch Dashboard"),
-      ("6", "⚙️ Show Configuration"),
+      ("3", "📊 Data Analysis"),
+      ("4", "📇 Contact Us"),
       ("q", "❌ Quit")
     ]
     
@@ -242,7 +240,7 @@ def interactive_mode():
         print(f"  {idx}. {desc}")
     
     while True:
-        choice = input("\n👉 Enter your choice (1-6 or q): ").strip().lower()
+        choice = input("\n👉 Enter your choice (1-4 or q): ").strip().lower()
         
         if choice == 'q':
             print("👋 Thanks for using MAN Scraper Suite!")
@@ -258,14 +256,15 @@ def interactive_mode():
                 ai_analysis_flow()
             elif choice == '4':
                 contact_flow()
-            elif choice == '5':
+            # Hidden options (for internal use)
+            elif choice == '5' and False:  # Dashboard - hidden
                 print("⚠️  Web Dashboard temporarily disabled (under development)")
                 print("💡 Use CLI commands for all functionality")
                 # run_cli(['dashboard'])  # Disabled temporarily
-            elif choice == '6':
+            elif choice == '6' and False:  # Config - hidden
                 run_cli(['config-show'])
             else:
-                print("❌ Invalid choice! Please try again. Enter a number between 1-6 or 'q' to quit.")
+                print("❌ Invalid choice! Please try again. Enter a number between 1-4 or 'q' to quit.")
         except KeyboardInterrupt:
             print("\n\n👋 Goodbye!")
             break
@@ -297,7 +296,7 @@ Advanced Examples:
   python manscrapersuite.py --dashboard --port 8080
   python manscrapersuite.py --interactive
 
-For full CLI features, use: python -m omniscraper.cli --help
+For full CLI features, use: python -m manscrapersuite.cli --help
         """
     )
     
@@ -349,7 +348,7 @@ For full CLI features, use: python -m omniscraper.cli --help
     
     try:
         # Import the CLI module
-        from omniscraper.cli import cli_main
+        from manscrapersuite.cli import cli_main
         
         # Convert arguments to CLI format
         cli_args = []
