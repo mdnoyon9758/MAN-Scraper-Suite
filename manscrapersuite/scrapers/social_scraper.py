@@ -145,16 +145,118 @@ class RedditScraper:
 
     def scrape_subreddit_posts(self, subreddit: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
-        Scrape subreddit posts
+        Scrape subreddit posts without API using web scraping
         """
-        subreddit_obj = self.reddit.subreddit(subreddit)
-        return [
-            {
-                'title': post.title,
-                'score': post.score,
-                'url': post.url,
-                'id': post.id,
-                'comments': len(post.comments)
-            } for post in subreddit_obj.hot(limit=limit)
-        ]
+        try:
+            # Use old Reddit format which is more scraping-friendly
+            url = f'https://old.reddit.com/r/{subreddit}/.json?limit={limit}'
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json, text/plain, */*',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+            }
+            
+            # Add random delay to avoid rate limiting
+            time.sleep(random.uniform(1, 3))
+            
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    posts = []
+                    
+                    if 'data' in data and 'children' in data['data']:
+                        for post_data in data['data']['children'][:limit]:
+                            if 'data' in post_data:
+                                post = post_data['data']
+                                posts.append({
+                                    'title': post.get('title', 'No title'),
+                                    'score': post.get('score', 0),
+                                    'url': post.get('url', ''),
+                                    'subreddit': subreddit,
+                                    'author': post.get('author', 'Unknown'),
+                                    'created_utc': post.get('created_utc', 0),
+                                    'num_comments': post.get('num_comments', 0),
+                                    'selftext': post.get('selftext', '')[:500],  # Limit text length
+                                    'platform': 'reddit'
+                                })
+                    
+                    return posts
+                    
+                except ValueError as e:
+                    print(f"Error parsing Reddit JSON: {e}")
+                    return self._fallback_html_scrape(subreddit, limit)
+                    
+            elif response.status_code == 429:
+                print("Rate limited by Reddit. Trying with longer delay...")
+                time.sleep(10)
+                return self._fallback_html_scrape(subreddit, limit)
+                
+            else:
+                print(f"Reddit API returned {response.status_code}. Trying HTML scraping...")
+                return self._fallback_html_scrape(subreddit, limit)
+                
+        except requests.exceptions.RequestException as e:
+            print(f"Network error accessing Reddit: {e}")
+            return self._fallback_html_scrape(subreddit, limit)
+        except Exception as e:
+            print(f"Unexpected error scraping Reddit: {e}")
+            return self._fallback_html_scrape(subreddit, limit)
+    
+    def _fallback_html_scrape(self, subreddit: str, limit: int) -> List[Dict[str, Any]]:
+        """
+        Fallback HTML scraping method for Reddit
+        """
+        try:
+            url = f'https://old.reddit.com/r/{subreddit}/'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=15)
+            
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                posts = []
+                
+                # Find post elements
+                post_elements = soup.find_all('div', class_='thing')
+                
+                for i, element in enumerate(post_elements[:limit]):
+                    try:
+                        title_elem = element.find('a', class_='title')
+                        title = title_elem.get_text(strip=True) if title_elem else f"Reddit post {i+1}"
+                        
+                        score_elem = element.find('div', class_='score')
+                        score = score_elem.get_text(strip=True) if score_elem else "0"
+                        
+                        author_elem = element.find('a', class_='author')
+                        author = author_elem.get_text(strip=True) if author_elem else "Unknown"
+                        
+                        posts.append({
+                            'title': title,
+                            'score': score,
+                            'author': author,
+                            'subreddit': subreddit,
+                            'platform': 'reddit',
+                            'scraped_via': 'html_fallback'
+                        })
+                        
+                    except Exception as e:
+                        continue
+                
+                return posts
+            else:
+                print(f"HTML fallback also failed with status {response.status_code}")
+                return []
+                
+        except Exception as e:
+            print(f"HTML fallback error: {e}")
+            return []
 
