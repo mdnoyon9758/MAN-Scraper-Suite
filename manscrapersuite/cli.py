@@ -84,7 +84,104 @@ except ImportError:
     print("❌ Missing dependencies for Google Authentication")
     sys.exit(1)
 
+# User Management Import
+try:
+    from .core.user_manager import UserManager
+except ImportError:
+    UserManager = None
+
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+# Global authentication state
+USER_AUTHENTICATED = False
+CURRENT_USER_INFO = {}
+
+def require_authentication(func):
+    """Decorator to require authentication before command execution"""
+    def wrapper(*args, **kwargs):
+        if not check_authentication():
+            show_authentication_required()
+            return
+        return func(*args, **kwargs)
+    return wrapper
+
+def check_authentication():
+    """Check if user is authenticated"""
+    # Check for token file
+    token_file = Path('token.json')
+    if token_file.exists():
+        try:
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+            if creds and creds.valid:
+                return True
+        except:
+            pass
+    return False
+
+def show_authentication_required():
+    """Show authentication required message"""
+    click.echo("\n" + "="*60)
+    click.echo("🔐 AUTHENTICATION REQUIRED")
+    click.echo("="*60)
+    click.echo("⚠️  You must authenticate before using MAN Scraper Suite")
+    click.echo("")
+    click.echo("🚀 To get started:")
+    click.echo("   1. Run: py -m manscrapersuite.cli google-auth")
+    click.echo("   2. Complete Google OAuth in your browser")
+    click.echo("   3. Start scraping!")
+    click.echo("")
+    click.echo("💡 This helps us:")
+    click.echo("   • Track usage and prevent abuse")
+    click.echo("   • Provide better support")
+    click.echo("   • Export data to your Google Sheets")
+    click.echo("   • Monitor system performance")
+    click.echo("")
+    click.echo("🔒 Your data remains private and secure.")
+    click.echo("="*60)
+
+def authenticate_and_log_user():
+    """Authenticate user and log to Google Sheets"""
+    global USER_AUTHENTICATED, CURRENT_USER_INFO
+    
+    if not UserManager:
+        click.echo("❌ User management not available")
+        return False
+    
+    try:
+        # Initialize user manager
+        config = Config()
+        user_manager = UserManager(config.config)
+        
+        # Get basic user info
+        import socket
+        import uuid
+        
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        device_id = str(uuid.uuid4())[:8]
+        
+        # For now, use a generic email. In real implementation, 
+        # you'd extract from Google OAuth token
+        user_email = "authenticated_user@example.com"
+        
+        # Register/authenticate user
+        success, message = user_manager.authenticate_user(user_email, ip_address, device_id)
+        
+        if success:
+            USER_AUTHENTICATED = True
+            CURRENT_USER_INFO = {
+                'email': user_email,
+                'ip_address': ip_address,
+                'device_id': device_id,
+                'authenticated_at': time.time()
+            }
+            return True
+    except Exception as e:
+        click.echo(f"Warning: User logging failed: {e}")
+        # Don't block authentication if logging fails
+        return True
+    
+    return False
 
 # NEW PHASE 5-7 IMPORTS
 try:
@@ -124,6 +221,11 @@ def cli(ctx, config: Optional[str], verbose: bool):
 @click.pass_context
 def scrape(ctx, url: str, dynamic: bool, output: Optional[str], format: str):
     """Scrape a single webpage"""
+    # Check authentication first
+    if not check_authentication():
+        show_authentication_required()
+        return
+    
     config = ctx.obj['config']
     
     click.echo(f"🔍 Scraping: {url}")
@@ -236,6 +338,11 @@ def twitter(ctx, keyword: str, count: int, output: Optional[str]):
 @click.pass_context
 def reddit(ctx, subreddit: str, limit: int, output: Optional[str]):
     """Scrape Reddit posts from a subreddit"""
+    # Check authentication first
+    if not check_authentication():
+        show_authentication_required()
+        return
+    
     config = ctx.obj['config']
     
     click.echo(f"📱 Scraping Reddit: r/{subreddit}")
@@ -444,50 +551,30 @@ def config_show(ctx):
 @cli.command()
 @click.pass_context
 def google_auth(ctx):
-    """Authenticate using Google OAuth and save the session details to Google Sheets"""
+    """Authenticate using Google OAuth and redirect to success page"""
     creds = None
 
-    # Check for existing credentials
+    # Check for valid credentials
     if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        creds = Credentials.from_authorized_user_file('token.json', USER_SCOPES)
 
-    # If there are no valid credentials, request a new one
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials/client_secret.json', SCOPES)
-            creds = flow.run_local_server(port=0)
+                'credentials/client_secret.json', USER_SCOPES)
+            success_html = 'http://example.com/success.html'
+            creds = flow.run_local_server(
+                port=0,
+                success_message=f'<html><head><meta http-equiv="Refresh" content="0; url={success_html}" /></head><body>Success! You may close this window.</body></html>'
+            )
 
-        # Save the credentials for future use
+        # Save the credentials
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
-    # Prepare the Google Sheets API
-    try:
-        service = build('sheets', 'v4', credentials=creds)
-
-        # Sheet ID and range
-        SPREADSHEET_ID = 'your_spreadsheet_id_here'
-        RANGE_NAME = 'Sheet1!A1:C1'
-
-        # Values to append
-        values = [
-            ['User', time.strftime("%Y-%m-%d %H:%M:%S"), 'Authenticated']
-        ]
-        body = {
-            'values': values
-        }
-
-        # Append values to the sheet
-        result = service.spreadsheets().values().append(
-            spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME,
-            valueInputOption="USER_ENTERED", body=body).execute()
-        click.echo("✅ Logged authentication to Google Sheets")
-
-    except Exception as e:
-        click.echo(f"❌ Error using Google Sheets API: {e}")
+    click.echo(f"✅ Google Authentication Successful! Redirect to: {success_html}")
 
 # NEW AI AND ANALYTICS COMMANDS
 @cli.command()

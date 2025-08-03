@@ -179,6 +179,15 @@ client_secret.json
 service_account.json
 *.key
 *.pem
+credentials/
+
+# Local development files
+session.json
+*.local
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # Temporary files
 *.tmp
