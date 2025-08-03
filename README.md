@@ -67,7 +67,7 @@ MAN Scraper Suite is a 100% free web scraping and automation toolkit that provid
 
 ## Quick Start
 
-1. **Installation**:
+### 🖥️ **Desktop Installation (Windows/Linux/macOS)**:
 
 Clone the repository and navigate to the directory:
 ```bash
@@ -78,7 +78,21 @@ $ cd MAN-Scraper-Suite
 Install required dependencies:
 ```bash
 $ pip install -r requirements.txt
+# OR use the installer
+$ python install.py
 ```
+
+### 📱 **Android/Termux Installation**:
+
+For Android users with Termux:
+```bash
+$ pkg install git python
+$ git clone https://github.com/mdnoyon9758/MAN-Scraper-Suite.git
+$ cd MAN-Scraper-Suite
+$ python install-termux.py
+```
+
+📖 **See [TERMUX.md](TERMUX.md) for detailed Android setup guide**
 
 2. **Usage**:
 

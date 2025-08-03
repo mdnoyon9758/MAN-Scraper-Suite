@@ -92,6 +92,13 @@ except ImportError:
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
+# User OAuth scopes (for authentication)
+USER_SCOPES = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid'
+]
+
 # Global authentication state
 USER_AUTHENTICATED = False
 CURRENT_USER_INFO = {}
