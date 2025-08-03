@@ -571,7 +571,7 @@ def google_auth(ctx):
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials/client_secret.json', USER_SCOPES)
-            success_html = 'http://example.com/success.html'
+            success_html = 'https://mdnoyon9758.github.io/MAN-Scraper-Suite/success.html'
             creds = flow.run_local_server(
                 port=0,
                 success_message=f'<html><head><meta http-equiv="Refresh" content="0; url={success_html}" /></head><body>Success! You may close this window.</body></html>'
